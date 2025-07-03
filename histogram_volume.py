@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import time
+import altair as alt
 
 # Data
 data = {
@@ -11,11 +10,11 @@ data = {
         "2022-12-13", "2022-12-12", "2022-09-12", "2022-08-12", "2022-07-12", "2022-06-12",
         "2022-05-12", "2022-02-12", "2022-01-12"
     ],
-    "Harga": [
-        1.8262, 1.826, 1.8158, 1.8231, 1.8042, 1.7953,
-        1.8254, 1.8254, 1.7977, 1.8002, 1.7878, 1.8187,
-        1.8255, 1.7923, 1.8107, 1.8015, 1.798, 1.7824,
-        1.7813, 1.8096, 1.8152
+    "Volume": [
+        10750000, 10599000, 11808000, 15962000, 10546000, 17577000,
+        11018000, 19750000, 8609000, 12875000, 18532000, 14380000,
+        23091000, 10778000, 15094000, 11627000, 15557000, 12786000,
+        17982000, 18372000, 22615000
     ]
 }
 
@@ -23,22 +22,13 @@ df = pd.DataFrame(data)
 df["Tanggal"] = pd.to_datetime(df["Tanggal"])
 
 # Judul
-st.title("Animasi Grafik Perubahan Harga per Tanggal")
+st.title("Grafik Volume Penjualan per Hari (Altair Chart)")
 
-# Plot animasi
-placeholder = st.empty()
-x = []
-y = []
+# Altair bar chart
+chart = alt.Chart(df).mark_bar().encode(
+    x=alt.X('Tanggal:T', title='Tanggal'),
+    y=alt.Y('Volume:Q', title='Volume'),
+    tooltip=['Tanggal', 'Volume']
+).properties(width=800, height=400)
 
-for i in range(0, len(df), 5):  # interval 5
-    x.append(df["Tanggal"].iloc[i])
-    y.append(df["Harga"].iloc[i])
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(x, y, marker='o', linestyle='-', color='green')
-    ax.set_xlabel("Tanggal")
-    ax.set_ylabel("Harga")
-    ax.set_title("Perubahan Harga")
-    ax.tick_params(axis='x', rotation=45)
-    placeholder.pyplot(fig)
-    time.sleep(0.5)
+st.altair_chart(chart, use_container_width=True)
