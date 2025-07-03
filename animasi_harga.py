@@ -6,39 +6,47 @@ import time
 # Data
 data = {
     "Tanggal": [
-        "2022-12-30", "2022-12-29", "2022-12-28", "2022-12-27", "2022-12-23", "2022-12-22",
-        "2022-12-21", "2022-12-20", "2022-12-19", "2022-12-16", "2022-12-15", "2022-12-14",
-        "2022-12-13", "2022-12-12", "2022-09-12", "2022-08-12", "2022-07-12", "2022-06-12",
-        "2022-05-12", "2022-02-12", "2022-01-12"
+        "30/12/2022", "29/12/2022", "28/12/2022", "27/12/2022", "23/12/2022", "22/12/2022",
+        "21/12/2022", "20/12/2022", "19/12/2022", "16/12/2022", "15/12/2022", "14/12/2022",
+        "13/12/2022", "12/12/2022", "12/09/2022", "12/08/2022", "12/07/2022", "12/06/2022",
+        "12/05/2022", "12/02/2022", "12/01/2022"
     ],
     "Harga": [
-        1.8262, 1.826, 1.8158, 1.8231, 1.8042, 1.7953,
-        1.8254, 1.8254, 1.7977, 1.8002, 1.7878, 1.8187,
-        1.8255, 1.7923, 1.8107, 1.8015, 1.798, 1.7824,
-        1.7813, 1.8096, 1.8152
+        "Rp18.262", "Rp1.826", "Rp18.158", "Rp18.231", "Rp18.042", "Rp17.953",
+        "Rp18.254", "Rp18.254", "Rp17.977", "Rp18.002", "Rp17.878", "Rp18.187",
+        "Rp18.255", "Rp17.923", "Rp18.107", "Rp18.015", "Rp1.798", "Rp17.824",
+        "Rp17.813", "Rp18.096", "Rp18.152"
+    ],
+    "Volume": [
+        10750000, 10599000, 11808000, 15962000, 10546000, 17577000,
+        11018000, 19750000, 8609000, 12875000, 18532000, 14380000,
+        23091000, 10778000, 15094000, 11627000, 15557000, 12786000,
+        17982000, 18372000, 22615000
     ]
 }
 
+# Format data
 df = pd.DataFrame(data)
-df["Tanggal"] = pd.to_datetime(df["Tanggal"])
+df["Tanggal"] = pd.to_datetime(df["Tanggal"], dayfirst=True)
+df["Harga"] = df["Harga"].str.replace("Rp", "").str.replace(".", "").astype(float) / 1000
 
-# Judul
-st.title("Animasi Grafik Perubahan Harga per Tanggal")
+# Judul dan animasi
+st.title("📈 Animasi Grafik Harga per Tanggal (Interval 5)")
 
-# Plot animasi
 placeholder = st.empty()
 x = []
 y = []
 
-for i in range(0, len(df), 5):  # interval 5
+for i in range(0, len(df), 5):
     x.append(df["Tanggal"].iloc[i])
     y.append(df["Harga"].iloc[i])
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(x, y, marker='o', linestyle='-', color='green')
-    ax.set_xlabel("Tanggal")
-    ax.set_ylabel("Harga")
-    ax.set_title("Perubahan Harga")
-    ax.tick_params(axis='x', rotation=45)
-    placeholder.pyplot(fig)
+    
+    anim_df = pd.DataFrame({"Tanggal": x, "Harga": y})
+    line_chart = alt.Chart(anim_df).mark_line(point=True).encode(
+        x='Tanggal:T',
+        y='Harga:Q',
+        tooltip=['Tanggal', 'Harga']
+    ).properties(width=800, height=400)
+    
+    placeholder.altair_chart(line_chart, use_container_width=True)
     time.sleep(0.5)
