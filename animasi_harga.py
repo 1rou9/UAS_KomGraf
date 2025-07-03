@@ -16,22 +16,14 @@ data = {
         "Rp18.254", "Rp18.254", "Rp17.977", "Rp18.002", "Rp17.878", "Rp18.187",
         "Rp18.255", "Rp17.923", "Rp18.107", "Rp18.015", "Rp1.798", "Rp17.824",
         "Rp17.813", "Rp18.096", "Rp18.152"
-    ],
-    "Volume": [
-        10750000, 10599000, 11808000, 15962000, 10546000, 17577000,
-        11018000, 19750000, 8609000, 12875000, 18532000, 14380000,
-        23091000, 10778000, 15094000, 11627000, 15557000, 12786000,
-        17982000, 18372000, 22615000
     ]
 }
 
-# Format data
 df = pd.DataFrame(data)
 df["Tanggal"] = pd.to_datetime(df["Tanggal"], dayfirst=True)
 df["Harga"] = df["Harga"].str.replace("Rp", "").str.replace(".", "").astype(float) / 1000
 
-# Judul dan animasi
-st.title("📈 Animasi Grafik Harga per Tanggal (Interval 5)")
+st.title("Animasi Grafik Garis Perubahan Harga per Tanggal (Interval 5)")
 
 placeholder = st.empty()
 x = []
@@ -42,11 +34,11 @@ for i in range(0, len(df), 5):
     y.append(df["Harga"].iloc[i])
     
     anim_df = pd.DataFrame({"Tanggal": x, "Harga": y})
-    line_chart = alt.Chart(anim_df).mark_line(point=True).encode(
-        x='Tanggal:T',
-        y='Harga:Q',
+    line_chart = alt.Chart(anim_df).mark_line(point=alt.OverlayMarkDef(color='red')).encode(
+        x=alt.X('Tanggal:T', title='Tanggal'),
+        y=alt.Y('Harga:Q', title='Harga'),
         tooltip=['Tanggal', 'Harga']
-    ).properties(width=800, height=400)
+    ).properties(width=800, height=400).configure_axisX(labelAngle=45)
     
     placeholder.altair_chart(line_chart, use_container_width=True)
     time.sleep(0.5)
