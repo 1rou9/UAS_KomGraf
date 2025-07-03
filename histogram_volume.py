@@ -5,10 +5,16 @@ import altair as alt
 # Data
 data = {
     "Tanggal": [
-        "2022-12-30", "2022-12-29", "2022-12-28", "2022-12-27", "2022-12-23", "2022-12-22",
-        "2022-12-21", "2022-12-20", "2022-12-19", "2022-12-16", "2022-12-15", "2022-12-14",
-        "2022-12-13", "2022-12-12", "2022-09-12", "2022-08-12", "2022-07-12", "2022-06-12",
-        "2022-05-12", "2022-02-12", "2022-01-12"
+        "30/12/2022", "29/12/2022", "28/12/2022", "27/12/2022", "23/12/2022", "22/12/2022",
+        "21/12/2022", "20/12/2022", "19/12/2022", "16/12/2022", "15/12/2022", "14/12/2022",
+        "13/12/2022", "12/12/2022", "12/09/2022", "12/08/2022", "12/07/2022", "12/06/2022",
+        "12/05/2022", "12/02/2022", "12/01/2022"
+    ],
+    "Harga": [
+        "Rp18.262", "Rp1.826", "Rp18.158", "Rp18.231", "Rp18.042", "Rp17.953",
+        "Rp18.254", "Rp18.254", "Rp17.977", "Rp18.002", "Rp17.878", "Rp18.187",
+        "Rp18.255", "Rp17.923", "Rp18.107", "Rp18.015", "Rp1.798", "Rp17.824",
+        "Rp17.813", "Rp18.096", "Rp18.152"
     ],
     "Volume": [
         10750000, 10599000, 11808000, 15962000, 10546000, 17577000,
@@ -18,17 +24,17 @@ data = {
     ]
 }
 
+# Format data
 df = pd.DataFrame(data)
-df["Tanggal"] = pd.to_datetime(df["Tanggal"])
+df["Tanggal"] = pd.to_datetime(df["Tanggal"], dayfirst=True)
 
-# Judul
-st.title("Grafik Volume Penjualan per Hari (Altair Chart)")
+# Judul dan grafik
+st.title("📊 Histogram Volume Penjualan per Hari")
 
-# Altair bar chart
-chart = alt.Chart(df).mark_bar().encode(
-    x=alt.X('Tanggal:T', title='Tanggal'),
-    y=alt.Y('Volume:Q', title='Volume'),
+bar_chart = alt.Chart(df).mark_bar().encode(
+    x='Tanggal:T',
+    y='Volume:Q',
     tooltip=['Tanggal', 'Volume']
 ).properties(width=800, height=400)
 
-st.altair_chart(chart, use_container_width=True)
+st.altair_chart(bar_chart, use_container_width=True)
